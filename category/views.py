@@ -1,10 +1,15 @@
-from rest_framework import serializers
-from .models import Category
+from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework import permissions
+from category import serializers
+from category.models import Category
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    slug = serializers.ReadOnlyField()
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = serializers.CategorySerializer
 
-    class Meta:
-        model = Category
-        fields = '__all__'
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return [permissions.AllowAny(),]
+        else:
+            return [permissions.IsAdminUser(),]
