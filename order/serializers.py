@@ -22,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         products = validated_data.pop('products')
-        request = self.context['requests']
+        request = self.context['request']
         user = request.user
         total_sum = 0
 
@@ -34,4 +34,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
         order = Order.objects.create(user=user, status='open', total_sum=total_sum, **validated_data)
 
+        for product in products:
+            try:
+                OrderItem.objects.create(order=order, product=product['product'], quantity=product['quantity'])
+            except KeyError:
+                OrderItem.objects.create(order=order, product=product['product'])
 
+        return order
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['products'] = OrderItemSerializer(instance.items.all(), many=True).data
+        repr.pop('product')
+        return repr

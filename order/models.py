@@ -16,6 +16,9 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
 
+    def __str__(self):
+        return f'{self.product.title}'
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
@@ -28,4 +31,5 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.id}, -> {self.user}"
+        ls = list(x.product.title for x in self.items.all())
+        return f"{self.id}, -> {self.user}: {ls}"
