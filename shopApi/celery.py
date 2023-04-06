@@ -1,7 +1,8 @@
 from celery import Celery
 import os
 
-os.environ.setdefault('DJANGO_SETTING_MODULE', 'shopApi.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shopApi.settings')
 
 app = Celery('shopApi')
-app.config_from_object('djnago.config:settings', namespace='CELERY')
+app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks()
