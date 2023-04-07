@@ -12,3 +12,4 @@ PyJWT
 redis
 celery
 redis
+django-cors-headers
